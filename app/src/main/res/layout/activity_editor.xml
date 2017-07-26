@@ -38,6 +38,44 @@
                 android:inputType="textCapWords"
                 style="@style/EditorFieldStyle" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <!-- Add Record in inventory -->
+                <Button
+                    android:layout_height="48dp"
+                    android:layout_width="48dp"
+                    android:id="@+id/plus"
+                    android:background="@color/colorPrimaryDark"
+                    android:text="+" />
+
+                <!-- remove Record in inventory -->
+                <Button
+                    android:layout_height="48dp"
+                    android:layout_width="48dp"
+                    android:layout_marginLeft="16dp"
+                    android:background="@color/colorPrimaryDark"
+                    android:id="@+id/minus"
+                    android:text="-" />
+            </LinearLayout>
+
+            <Button
+                android:layout_height="48dp"
+                android:layout_width="wrap_content"
+                android:id="@+id/add_image"
+                android:layout_gravity="center"
+                android:text="add image" />
+
+            <ImageView
+                android:id="@+id/edit_item_image"
+                android:layout_width="150dp"
+                android:layout_gravity="center"
+                android:layout_height="150dp"
+                android:layout_weight="1" />
+
             <!-- Price field -->
             <EditText
                 android:id="@+id/edit_item_price"
@@ -45,7 +83,30 @@
                 android:inputType="textCapWords"
                 style="@style/EditorFieldStyle" />
 
+            <!-- Price field -->
+            <EditText
+                android:id="@+id/edit_supplier_email"
+                android:hint="supplier email"
+                android:inputType="textCapWords"
+                style="@style/EditorFieldStyle" />
+
         </LinearLayout>
     </LinearLayout>
+
+    <!-- Email Supplier Button -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <Button
+            android:layout_height="48dp"
+            android:layout_width="48dp"
+            android:id="@+id/email_button"
+            android:text="order"
+            android:background="@color/colorPrimaryDark" />
+
+    </LinearLayout>
+
 
 </LinearLayout>

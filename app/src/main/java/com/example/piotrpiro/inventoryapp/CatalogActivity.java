@@ -26,10 +26,16 @@ import com.example.piotrpiro.inventoryapp.data.InventoryContract.InventoryEntry;
 public class CatalogActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
-    /** Identifier for the item data loader */
+    public static final String LOG_TAG = CatalogActivity.class.getSimpleName();
+
+    /**
+     * Identifier for the item data loader
+     */
     private static final int ITEM_LOADER = 0;
 
-    /** Adapter for the ListView */
+    /**
+     * Adapter for the ListView
+     */
     InventoryCursorAdapter mCursorAdapter;
 
     @Override
@@ -66,7 +72,7 @@ public class CatalogActivity extends AppCompatActivity implements
                 // Create new intent to go to {@link EditorActivity}
                 Intent intent = new Intent(CatalogActivity.this, EditorActivity.class);
 
-                // Form the content URI that represents the specific pet that was clicked on,
+                // Form the content URI that represents the specific item that was clicked on,
                 // by appending the "id" (passed as input to this method) onto the
                 // {@link InventoryEntry#CONTENT_URI}.
                 // For example, the URI would be "content://com.example.piotrpiro.inventory/inventory/2"
@@ -91,10 +97,17 @@ public class CatalogActivity extends AppCompatActivity implements
     private void insertItem() {
         // Create a ContentValues object where column names are the keys,
         // and Dove shampoo item attributes are the values.
+
+        Uri path = Uri.parse("android.resource://com.example.piotrpiro.inventoryapp/" +
+                R.drawable.dove_shampoo);
+        String imgPath = path.toString();
+
         ContentValues values = new ContentValues();
         values.put(InventoryEntry.COLUMN_ITEM_NAME, "Dove shampoo");
         values.put(InventoryEntry.COLUMN_ITEM_QUANTITY, 8);
         values.put(InventoryEntry.COLUMN_ITEM_PRICE, 9);
+        values.put(InventoryEntry.COLUMN_ITEM_IMAGE, imgPath);
+        values.put(InventoryEntry.COLUMN_SUPPLIER_EMAIL, "order@gmail.com");
 
         // Insert a new row for Dove shampoo into the provider using the ContentResolver.
         // Use the {@link InventoryEntry#CONTENT_URI} to indicate that we want to insert
@@ -140,8 +153,9 @@ public class CatalogActivity extends AppCompatActivity implements
         // Define a projection that specifies the columns from the table we care about.
         String[] projection = {
                 InventoryEntry._ID,
+                InventoryEntry.COLUMN_ITEM_NAME,
                 InventoryEntry.COLUMN_ITEM_QUANTITY,
-                InventoryEntry.COLUMN_ITEM_PRICE };
+                InventoryEntry.COLUMN_ITEM_PRICE};
 
         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(this,   // Parent activity context

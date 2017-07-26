@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.piotrpiro.inventoryapp.data.InventoryContract.InventoryEntry;
 
@@ -16,13 +17,13 @@ import com.example.piotrpiro.inventoryapp.data.InventoryContract.InventoryEntry;
  */
 public class InventoryProvider extends ContentProvider{
 
-    /** Tag for the log messages */
+    // Tag for the log messages
     public static final String LOG_TAG = InventoryProvider.class.getSimpleName();
 
-    /** URI matcher code for the content URI for the items table */
+    // URI matcher code for the content URI for the items table
     private static final int INVENTORY = 100;
 
-    /** URI matcher code for the content URI for a single item in the items table */
+    // URI matcher code for the content URI for a single item in the items table
     private static final int INVENTORY_ID = 101;
 
     /**
@@ -53,7 +54,7 @@ public class InventoryProvider extends ContentProvider{
         sUriMatcher.addURI(InventoryContract.CONTENT_AUTHORITY, InventoryContract.PATH_ITEMS + "/#", INVENTORY_ID);
     }
 
-    /** Database helper object */
+    // Database helper object
     private InventoryDbHelper mDbHelper;
 
     @Override
@@ -93,7 +94,7 @@ public class InventoryProvider extends ContentProvider{
                 selection = InventoryEntry._ID + "=?";
                 selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
 
-                // This will perform a query on the pets table where the _id equals 3 to return a
+                // This will perform a query on the items table where the _id equals 3 to return a
                 // Cursor containing that row of the table.
                 cursor = database.query(InventoryEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
@@ -127,16 +128,18 @@ public class InventoryProvider extends ContentProvider{
      * for that specific row in the database.
      */
     private Uri insertItem(Uri uri, ContentValues values) {
+
         // Check that the name is not null
         String name = values.getAsString(InventoryEntry.COLUMN_ITEM_NAME);
         if (name == null) {
             throw new IllegalArgumentException("Item requires a name");
         }
 
-        // If the quantity is provided, check that it's greater than 0
+        // Check that the quantity is not null
         Integer quantity = values.getAsInteger(InventoryEntry.COLUMN_ITEM_QUANTITY);
-        if (quantity != null && quantity < 0) {
-            throw new IllegalArgumentException("Item requires valid quantity");
+        if (quantity == null && quantity < 0) {
+            Toast.makeText(getContext(), "Record requires a quantity", Toast.LENGTH_LONG).show();
+            throw new IllegalArgumentException("Record requires a quantity");
         }
 
         // If the price is provided, check that it's greater than 0
@@ -145,10 +148,17 @@ public class InventoryProvider extends ContentProvider{
             throw new IllegalArgumentException("Item requires valid price");
         }
 
+        // Check that the record image is not null
+        String itemImage = values.getAsString(InventoryEntry.COLUMN_ITEM_IMAGE);
+        if (itemImage == null) {
+            Toast.makeText(getContext(), "Record requires an image", Toast.LENGTH_LONG).show();
+            throw new IllegalArgumentException("Item requires an image");
+        }
+
         // Get writeable database
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
 
-        // Insert the new pet with the given values
+        // Insert the new item with the given values
         long id = database.insert(InventoryEntry.TABLE_NAME, null, values);
         // If the ID is -1, then the insertion failed. Log an error and return null.
         if (id == -1) {
@@ -156,7 +166,7 @@ public class InventoryProvider extends ContentProvider{
             return null;
         }
 
-        // Notify all listeners that the data has changed for the pet content URI
+        // Notify all listeners that the data has changed for the item content URI
         getContext().getContentResolver().notifyChange(uri, null);
 
         // Return the new URI with the ID (of the newly inserted row) appended at the end
@@ -183,11 +193,12 @@ public class InventoryProvider extends ContentProvider{
     }
 
     /**
-     * Update pets in the database with the given content values. Apply the changes to the rows
+     * Update items in the database with the given content values. Apply the changes to the rows
      * specified in the selection and selection arguments (which could be 0 or 1 or more items).
      * Return the number of rows that were successfully updated.
      */
     private int updateItem(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+
         // If the {@link InventoryEntry#COLUMN_ITEM_NAME} key is present,
         // check that the name value is not null.
         if (values.containsKey(InventoryEntry.COLUMN_ITEM_NAME)) {
@@ -201,7 +212,7 @@ public class InventoryProvider extends ContentProvider{
         // check that the quantity value is valid.
         if (values.containsKey(InventoryEntry.COLUMN_ITEM_QUANTITY)) {
             Integer quantity = values.getAsInteger(InventoryEntry.COLUMN_ITEM_QUANTITY);
-            if (quantity != null && quantity <= 0) {
+            if (quantity != null && quantity < 0) {
                 throw new IllegalArgumentException("Item requires valid quantity");
             }
         }
@@ -214,6 +225,11 @@ public class InventoryProvider extends ContentProvider{
             if (price != null && price <= 0) {
                 throw new IllegalArgumentException("Item requires valid price");
             }
+        }
+
+        //Check that the item image is not null
+        if (values.containsKey(InventoryEntry.COLUMN_ITEM_IMAGE)) {
+            throw new IllegalArgumentException("Item requires an image");
         }
 
         // If there are no values to update, then don't try to update the database

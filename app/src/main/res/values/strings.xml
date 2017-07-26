@@ -73,4 +73,12 @@
 
     <!-- Text for quantity field in the editor [CHAR LIMIT=30] -->
     <string name="zero_quantity">Zero</string>
+
+    <!-- Text for sale button field to reduce the current quantity by one [CHAR LIMIT=30] -->
+    <string name="sale">Sale</string>
+
+    <!-- Text for information that items are sold out [CHAR LIMIT=30] -->
+    <string name="sold_out">Sold out</string>
+
+    <string name="negative_stock">You cannot have a negative stock</string>
 </resources>
